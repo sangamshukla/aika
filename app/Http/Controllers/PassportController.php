@@ -16,28 +16,38 @@ class PassportController extends Controller
             'password' => $request->password
         ];
 
-        // return response()->json(['cred'=>$credentials], 200);
         if (Auth::attempt($credentials)) {
             // $token = auth()->user()->createToken('My Token')->accessToken;
-            return response()->json(['token' => 'message successful'], 200);
+            return response()->json(['msg' => "user is logged in"], 200);
         } else {
             return response()->json(['error' => 'UnAuthorised'], 401);
         }
     }
     public function register(Request $request)
     {
-        $success=User::create([
-            'name'=>$request->name,
-            'email'=>$request->email,
-            'password'=>$request->password,
-        ]);
-        if($success){
 
-            return response()->json(['msg'=>'user has been created successfully'],200);
+        if($request->password==$request->confirmed_password)
+        {
+            $success=User::create([
+                'name'=>$request->name,
+                'email'=>$request->email,
+                'password'=>$request->password
+            ]);
+            if($success){
+
+                return response()->json(['msg'=>'user has been created successfully'],200);
+            }
+            else{
+                return response()->json(['msg'=>'User could not be created']);
+            }
         }
-        else{
-            return response()->json(['msg'=>'User could not be created']);
-        }
+
+
+            else{
+                return response()->json(['msg'=>'password does not match']);
+            }
+
+
     }
     public function users()
     {
